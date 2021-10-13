@@ -7,9 +7,9 @@
 #ifdef ARDUINO_ARCH_ESP32
 
 namespace esphome {
-namespace inkplate6 {
+namespace inkplate10 {
 
-class Inkplate6 : public PollingComponent, public display::DisplayBuffer, public i2c::I2CDevice {
+class Inkplate10 : public PollingComponent, public display::DisplayBuffer, public i2c::I2CDevice {
  public:
   const uint8_t LUT2[16] = {B10101010, B10101001, B10100110, B10100101, B10011010, B10011001, B10010110, B10010101,
                             B01101010, B01101001, B01100110, B01100101, B01011010, B01011001, B01010110, B01010101};
@@ -97,9 +97,9 @@ class Inkplate6 : public PollingComponent, public display::DisplayBuffer, public
   void pins_z_state_();
   void pins_as_outputs_();
 
-  int get_width_internal() override { return 800; }
+  int get_width_internal() override { return 1200; }
 
-  int get_height_internal() override { return 600; }
+  int get_height_internal() override { return 825; }
 
   size_t get_buffer_length_();
 
@@ -154,7 +154,7 @@ class Inkplate6 : public PollingComponent, public display::DisplayBuffer, public
   GPIOPin *wakeup_pin_;
 };
 
-}  // namespace inkplate6
+}  // namespace inkplate10
 }  // namespace esphome
 
 #endif

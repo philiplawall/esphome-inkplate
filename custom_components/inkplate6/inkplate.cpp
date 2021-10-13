@@ -6,11 +6,11 @@
 #ifdef ARDUINO_ARCH_ESP32
 
 namespace esphome {
-namespace inkplate6 {
+namespace inkplate10 {
 
 static const char *TAG = "inkplate";
 
-void Inkplate6::setup() {
+void Inkplate10::setup() {
   this->initialize_();
 
   this->vcom_pin_->setup();
@@ -39,7 +39,7 @@ void Inkplate6::setup() {
   this->clean();
   this->display();
 }
-void Inkplate6::initialize_() {
+void Inkplate10::initialize_() {
   uint32_t buffer_size = this->get_buffer_length_();
 
   if (this->partial_buffer_ != nullptr) {
@@ -108,15 +108,15 @@ void Inkplate6::initialize_() {
 
   memset(this->buffer_, 0, buffer_size);
 }
-float Inkplate6::get_setup_priority() const { return setup_priority::PROCESSOR; }
-size_t Inkplate6::get_buffer_length_() {
+float Inkplate10::get_setup_priority() const { return setup_priority::PROCESSOR; }
+size_t Inkplate10::get_buffer_length_() {
   if (this->greyscale_) {
     return size_t(this->get_width_internal()) * size_t(this->get_height_internal()) / 2u;
   } else {
     return size_t(this->get_width_internal()) * size_t(this->get_height_internal()) / 8u;
   }
 }
-void Inkplate6::update() {
+void Inkplate10::update() {
   this->do_update_();
 
   if (this->full_update_every_ > 0 && this->partial_updates_ >= this->full_update_every_) {
@@ -125,7 +125,7 @@ void Inkplate6::update() {
 
   this->display();
 }
-void HOT Inkplate6::draw_absolute_pixel_internal(int x, int y, Color color) {
+void HOT Inkplate10::draw_absolute_pixel_internal(int x, int y, Color color) {
   if (x >= this->get_width_internal() || y >= this->get_height_internal() || x < 0 || y < 0)
     return;
 
@@ -150,7 +150,7 @@ void HOT Inkplate6::draw_absolute_pixel_internal(int x, int y, Color color) {
     this->partial_buffer_[pos] = (~pixelMaskLUT[x_sub] & current) | (color.is_on() ? 0 : pixelMaskLUT[x_sub]);
   }
 }
-void Inkplate6::dump_config() {
+void Inkplate10::dump_config() {
   LOG_DISPLAY("", "Inkplate", this);
   ESP_LOGCONFIG(TAG, "  Greyscale: %s", YESNO(this->greyscale_));
   ESP_LOGCONFIG(TAG, "  Partial Updating: %s", YESNO(this->partial_updating_));
@@ -179,7 +179,7 @@ void Inkplate6::dump_config() {
 
   LOG_UPDATE_INTERVAL(this);
 }
-void Inkplate6::eink_off_() {
+void Inkplate10::eink_off_() {
   ESP_LOGV(TAG, "Eink off called");
   unsigned long start_time = millis();
   if (panel_on_ == 0)
@@ -199,7 +199,7 @@ void Inkplate6::eink_off_() {
 
   pins_z_state_();
 }
-void Inkplate6::eink_on_() {
+void Inkplate10::eink_on_() {
   ESP_LOGV(TAG, "Eink on called");
   unsigned long start_time = millis();
   if (panel_on_ == 1)
@@ -229,7 +229,7 @@ void Inkplate6::eink_on_() {
   this->ckv_pin_->digital_write(false);
   this->oe_pin_->digital_write(true);
 }
-void Inkplate6::fill(Color color) {
+void Inkplate10::fill(Color color) {
   ESP_LOGV(TAG, "Fill called");
   unsigned long start_time = millis();
 
@@ -245,7 +245,7 @@ void Inkplate6::fill(Color color) {
 
   ESP_LOGV(TAG, "Fill finished (%lums)", millis() - start_time);
 }
-void Inkplate6::display() {
+void Inkplate10::display() {
   ESP_LOGV(TAG, "Display called");
   unsigned long start_time = millis();
 
@@ -260,7 +260,7 @@ void Inkplate6::display() {
   }
   ESP_LOGV(TAG, "Display finished (full) (%lums)", millis() - start_time);
 }
-void Inkplate6::display1b_() {
+void Inkplate10::display1b_() {
   ESP_LOGV(TAG, "Display1b called");
   unsigned long start_time = millis();
 
@@ -385,7 +385,7 @@ void Inkplate6::display1b_() {
   this->partial_updates_ = 0;
   ESP_LOGV(TAG, "Display1b finished (%lums)", millis() - start_time);
 }
-void Inkplate6::display3b_() {
+void Inkplate10::display3b_() {
   ESP_LOGV(TAG, "Display3b called");
   unsigned long start_time = millis();
 
@@ -426,7 +426,7 @@ void Inkplate6::display3b_() {
   eink_off_();
   ESP_LOGV(TAG, "Display3b finished (%lums)", millis() - start_time);
 }
-bool Inkplate6::partial_update_() {
+bool Inkplate10::partial_update_() {
   ESP_LOGV(TAG, "Partial update called");
   unsigned long start_time = millis();
   if (this->greyscale_)
@@ -487,7 +487,7 @@ bool Inkplate6::partial_update_() {
   ESP_LOGV(TAG, "Partial update finished (%lums)", millis() - start_time);
   return true;
 }
-void Inkplate6::vscan_start_() {
+void Inkplate10::vscan_start_() {
   this->ckv_pin_->digital_write(true);
   delayMicroseconds(7);
   this->spv_pin_->digital_write(false);
@@ -510,7 +510,7 @@ void Inkplate6::vscan_start_() {
   delayMicroseconds(0);
   this->ckv_pin_->digital_write(true);
 }
-void Inkplate6::vscan_write_() {
+void Inkplate10::vscan_write_() {
   this->ckv_pin_->digital_write(false);
   this->le_pin_->digital_write(true);
   this->le_pin_->digital_write(false);
@@ -521,20 +521,20 @@ void Inkplate6::vscan_write_() {
   this->sph_pin_->digital_write(true);
   this->ckv_pin_->digital_write(true);
 }
-void Inkplate6::hscan_start_(uint32_t d) {
+void Inkplate10::hscan_start_(uint32_t d) {
   this->sph_pin_->digital_write(false);
   GPIO.out_w1ts = (d) | (1 << this->cl_pin_->get_pin());
   GPIO.out_w1tc = get_data_pin_mask_() | (1 << this->cl_pin_->get_pin());
   this->sph_pin_->digital_write(true);
 }
-void Inkplate6::vscan_end_() {
+void Inkplate10::vscan_end_() {
   this->ckv_pin_->digital_write(false);
   this->le_pin_->digital_write(true);
   this->le_pin_->digital_write(false);
   delayMicroseconds(1);
   this->ckv_pin_->digital_write(true);
 }
-void Inkplate6::clean() {
+void Inkplate10::clean() {
   ESP_LOGV(TAG, "Clean called");
   unsigned long start_time = millis();
 
@@ -547,7 +547,7 @@ void Inkplate6::clean() {
   clean_fast_(1, 10);  // White to White
   ESP_LOGV(TAG, "Clean finished (%lums)", millis() - start_time);
 }
-void Inkplate6::clean_fast_(uint8_t c, uint8_t rep) {
+void Inkplate10::clean_fast_(uint8_t c, uint8_t rep) {
   ESP_LOGV(TAG, "Clean fast called with: (%d, %d)", c, rep);
   unsigned long start_time = millis();
 
@@ -586,7 +586,7 @@ void Inkplate6::clean_fast_(uint8_t c, uint8_t rep) {
   }
   ESP_LOGV(TAG, "Clean fast finished (%lums)", millis() - start_time);
 }
-void Inkplate6::pins_z_state_() {
+void Inkplate10::pins_z_state_() {
   this->ckv_pin_->pin_mode(INPUT);
   this->sph_pin_->pin_mode(INPUT);
 
@@ -603,7 +603,7 @@ void Inkplate6::pins_z_state_() {
   this->display_data_6_pin_->pin_mode(INPUT);
   this->display_data_7_pin_->pin_mode(INPUT);
 }
-void Inkplate6::pins_as_outputs_() {
+void Inkplate10::pins_as_outputs_() {
   this->ckv_pin_->pin_mode(OUTPUT);
   this->sph_pin_->pin_mode(OUTPUT);
 
@@ -621,7 +621,7 @@ void Inkplate6::pins_as_outputs_() {
   this->display_data_7_pin_->pin_mode(OUTPUT);
 }
 
-}  // namespace inkplate6
+}  // namespace Inkplate10
 }  // namespace esphome
 
 #endif
